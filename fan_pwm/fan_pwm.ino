@@ -9,6 +9,7 @@
 LiquidCrystal lcd(7, 8, 24, 26, 28, 30);
 
 const int PIN_MQ135 = 15;
+const int button = 12;
 float temp = 21.0; 
 float humidity = 50.0; 
 //const int tach = 2;
@@ -43,7 +44,9 @@ int fanSpeed(int aqi) {
 void setup() {
   
   lcd.begin(16, 2);
+  lcd.clear();
   pinMode(fanPin, OUTPUT);
+  pinMode(button, INPUT_PULLUP);
   Serial.begin(9600);
   Serial.println("\nEnter value from 0-255: \n");
 
@@ -51,7 +54,10 @@ void setup() {
 
 void loop() {
 
-  lcd.setCursor(0, 0);
+  int state = digitalRead(button);
+  if (state == 1) {
+    speed = 0; 
+  }
   //reads ppm from MQ135 and converts it to an approximation of AQI 
   float ppm = mq135_sensor.getCorrectedPPM(temp, humidity); 
   int aqi = mapToAQI(ppm); 
@@ -59,6 +65,7 @@ void loop() {
   newSpeed = Serial.parseInt();
 
   // reads input of the MQ135 sensor and displays it to the lcd
+  lcd.setCursor(0,0);
   Serial.println(aqi);
   lcd.print("AQI: ");
   if (aqi > 99) {
@@ -69,36 +76,46 @@ void loop() {
     lcd.print(" ");
 
   }
+  lcd.setCursor(0, 0);
 
 
 
-  // handles the input of the fan speed 
-  /*if (Serial.available() > 0) {
-  
+
+    // handles the input of the fan speed 
+    /*if (Serial.available() > 0) {
     
+      
 
-    Serial.println("Fan speed is now: ");
+      Serial.println("Fan speed is now: ");
 
-    lcd.setCursor(0, 1);
-    lcd.print("                ");
-    lcd.setCursor(0, 1);
-    lcd.print("Fan speed: ");
-    lcd.print(newSpeed);
-    speed = newSpeed;
-    Serial.println(speed);
+      lcd.setCursor(0, 1);
+      lcd.print("                ");
+      lcd.setCursor(0, 1);
+      lcd.print("Fan speed: ");
+      lcd.print(newSpeed);
+      speed = newSpeed;
+      Serial.println(speed);
 
-  }*/
-  speed = fanSpeed(aqi);
+    }*/
+
   //changes the fan speed, if there is a new input detected 
+
+  if (state == 0) {
+    speed = fanSpeed(aqi);
+    
+  }
   analogWrite(fanPin, speed); 
   lcd.setCursor(0, 1);
   lcd.print("                ");
   lcd.setCursor(0, 1);
   lcd.print("Fan speed: ");
   lcd.print(speed);
+
+
   while(Serial.available() > 0) {
     Serial.read();  
   }
+
 
 
 }
