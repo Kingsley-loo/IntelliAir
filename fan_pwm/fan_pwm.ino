@@ -9,7 +9,7 @@
 LiquidCrystal lcd(7, 8, 24, 26, 28, 30);
 
 const int PIN_MQ135 = 15;
-const int button = 12;
+const int button = 10;
 float temp = 21.0; 
 float humidity = 50.0; 
 //const int tach = 2;
@@ -22,6 +22,7 @@ MQ135 mq135_sensor(PIN_MQ135);
  
 
 int mapToAQI(float ppm) {
+  ppm = constrain(ppm, 150, 2500);
   float aqi = map(ppm, 150, 2500, 0, 500);
   return aqi; 
 }
@@ -55,6 +56,8 @@ void setup() {
 void loop() {
 
   int state = digitalRead(button);
+  Serial.println("switch is: ");
+  Serial.println(state);
   if (state == 1) {
     speed = 0; 
   }
