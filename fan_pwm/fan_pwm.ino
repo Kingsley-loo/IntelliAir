@@ -18,7 +18,7 @@ int speed = 0;
 int newSpeed = 1; 
 bool speedOverride = 0;
 
-MQ135 mq135_sensor(PIN_MQ135, 58.00);
+MQ135 mq135_sensor(PIN_MQ135, 51.30);
  
 
 int mapToAQI(float ppm) {
