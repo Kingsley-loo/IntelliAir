@@ -17,25 +17,24 @@ const int fanPin = 11;
 int speed = 0;
 bool speedOverride = 0;
 
-MQ135 mq135_sensor(PIN_MQ135, 37.41);
+MQ135 mq135_sensor(PIN_MQ135, 48.17);
  
 
 int mapToAQI(float ppm) {
-  ppm = constrain(ppm, 150, 3000);
-  float aqi = map(ppm, 150, 3000, 0, 500);
+  ppm = constrain(ppm, 150, 3500);
+  float aqi = map(ppm, 150, 3500, 0, 500);
   return aqi; 
 }
 
 int fanSpeed(int aqi) {
-  int speed = 0;
   if (aqi <= 50) {
-    speed = 162;
+    return 0;
   } else if (aqi >= 51 && aqi <= 100) {
-    speed = 190;
+    return 162;
   } else if (aqi >= 101 && aqi <= 150) {
-    speed = 220; 
+    return 190; 
   } else if (aqi > 150) {
-    speed = 255;
+    return 255;
   }
   return speed;
 }
